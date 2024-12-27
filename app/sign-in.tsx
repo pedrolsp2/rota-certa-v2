@@ -2,8 +2,8 @@
 /* eslint-disable import/order */
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
-import { useForm } from 'react-hook-form';
+import { View, Text, TouchableOpacity, Alert, SafeAreaView, ActivityIndicator } from 'react-native';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Eye, EyeOff } from 'lucide-react-native';
@@ -11,8 +11,14 @@ import { Label } from '@/components/Label';
 import { Input } from '@/components/Input';
 import { primary } from '@/config/colors';
 import { router } from 'expo-router';
+import { loginUser } from './api/signin';
+import { setItem } from '@/utils/storage';
+import { Store, useStoreBase } from '@/store';
 
-// Esquema de validação com Zod
+const stateSelector = (state: Store) => ({
+  login: state.login,
+});
+
 const schema = z.object({
   email: z.string().email({ message: 'Email inválido' }),
   password: z.string().min(6, { message: 'A senha deve ter pelo menos 6 caracteres' }),
@@ -21,20 +27,29 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 const Login: React.FC = () => {
+  const { login } = useStoreBase(stateSelector);
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
+    control,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = (data: FormData) => {
-    Alert.alert('Login realizado com sucesso', JSON.stringify(data));
-    reset();
+  const onSubmit = async (data: FormData) => {
+    const { message, success, user } = await loginUser({ ...data, setIsLoading });
+    Alert.alert(success ? 'Sucesso!' : 'Erro!', message);
+    if (success) {
+      reset();
+      setItem('user', user);
+      login(user!);
+      router.replace('/');
+    }
   };
 
   return (
@@ -50,23 +65,46 @@ const Login: React.FC = () => {
         <View className="container gap-4">
           <View>
             <Label>Email</Label>
-            <Input
-              {...register('email')}
-              placeholder="Digite seu email"
-              keyboardType="email-address"
-              className={errors.email ? 'border-red-500' : ''}
+            <Controller
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  {...register('email')}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  autoCapitalize="none"
+                  placeholder="Digite seu email"
+                  keyboardType="email-address"
+                  className={errors.email ? 'border-red-500' : ''}
+                />
+              )}
+              name="email"
             />
           </View>
 
           <View>
             <Label>Senha</Label>
             <View className="relative">
-              <Input
-                {...register('password')}
-                placeholder="Digite sua senha"
-                secureTextEntry={!showPassword}
-                className={errors.password ? 'border-red-500' : ''}
+              <Controller
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    {...register('password')}
+                    placeholder="Digite sua senha"
+                    secureTextEntry={!showPassword}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    autoCapitalize="none"
+                    className={errors.password ? 'border-red-500' : ''}
+                  />
+                )}
+                name="password"
               />
+
               <TouchableOpacity
                 onPress={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-3">
@@ -83,8 +121,10 @@ const Login: React.FC = () => {
         <View className="container mt-12">
           <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
-            className="mt-6 rounded-lg bg-primary-500 py-3">
-            <Text className="text-center text-lg font-semibold text-white">Entrar</Text>
+            className="mt-6 flex items-center justify-center rounded-lg bg-primary-500 py-3">
+            <Text className="text-center text-lg font-semibold text-white">
+              {isLoading ? <ActivityIndicator size="small" color="#fff" /> : 'Entrar'}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => router.replace('/sign-up')}>

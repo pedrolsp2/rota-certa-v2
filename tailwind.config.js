@@ -19,7 +19,7 @@ module.exports = {
           800: '#00443c',
           900: '#00221e',
         },
-        border: 'hsl(var(--border))',
+
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
@@ -48,9 +48,6 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-      },
-      borderWidth: {
-        hairline: hairlineWidth(),
       },
       keyframes: {
         'accordion-down': {
