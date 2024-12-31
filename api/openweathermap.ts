@@ -6,36 +6,43 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 export const useOpenWeatherMap = (cep: string) => {
-  const [weather, setWeather] = useState<Weathermap>({} as Weathermap);
+  const [weather, setWeather] = useState<Weathermap | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const getCep = async () => {
-      const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-      return response.data.localidade;
+      try {
+        const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+        return response.data.localidade || null;
+      } catch (error) {
+        console.error('Error fetching location:', error);
+        return null;
+      }
     };
 
     const fetchWeather = async () => {
       setIsLoading(true);
       try {
-        const { localidade } = await getCep();
+        const localidade = await getCep();
+        if (!localidade) {
+          throw new Error('Invalid location');
+        }
         const response = await axios.get(
           `https://api.openweathermap.org/data/2.5/weather?q=${localidade},BR&appid=fc46efc49169460fb1f840f0c17f51a3&units=metric&lang=pt`
         );
         setWeather(response.data);
-        setIsLoading(false);
       } catch (error) {
-        setIsLoading(false);
         console.error('Error fetching weather data:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    setInterval(
-      () => {
-        fetchWeather();
-      },
-      5 * 100 * 60
-    );
-  }, []);
+    fetchWeather();
+    const intervalId = setInterval(fetchWeather, 5 * 60 * 1000);
+
+    return () => clearInterval(intervalId);
+  }, [cep]);
+
   return { weather, isLoading };
 };

@@ -1,10 +1,22 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable import/order */
 /* eslint-disable prettier/prettier */
-import { useOpenWeatherMap } from '@/app/api/openweathermap';
-import { primary } from '@/config/colors';
 import React from 'react';
 import { ActivityIndicator, Text, View, Image } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useOpenWeatherMap } from '@/api/openweathermap';
+import { firstUpperCase } from '@/utils/formatString';
+import {
+  Cloud,
+  CloudFog,
+  CloudHail,
+  CloudLightning,
+  CloudRainWind,
+  CloudSun,
+  Cloudy,
+  Snowflake,
+  Sun,
+} from 'lucide-react-native';
 
 interface CardWeathermapProps {
   props: string;
@@ -12,33 +24,88 @@ interface CardWeathermapProps {
 
 const CardWeathermap: React.FC<CardWeathermapProps> = ({ props }) => {
   const { weather, isLoading } = useOpenWeatherMap(props);
+
+  const Icon = {
+    '01d': Sun,
+    '02d': CloudSun,
+    '03d': Cloud,
+    '04d': Cloudy,
+    '09d': CloudHail,
+    '10d': CloudRainWind,
+    '11d': CloudLightning,
+    '13d': Snowflake,
+    '50d': CloudFog,
+  };
+
+  const gradiente = {
+    '01d': ['#49b8fc', '#87CEFA'],
+    '02d': ['#19a3f7', '#60bff7'],
+    '03d': ['#fafafa', '#dadada'],
+    '04d': ['#707070', '#dadada'],
+    '09d': ['#0279bf', '#22a5f2'],
+    '10d': ['#0d8fdb', '#45b5f7'],
+    '11d': ['#49b8fc', '#87CEFA'],
+    '13d': ['#49b8fc', '#87CEFA'],
+    '50d': ['#49b8fc', '#87CEFA'],
+  };
+
+  //@ts-ignore
+  const WeatherIcon = Icon[weather?.weather?.[0]?.icon || '01d'];
+  //@ts-ignore
+  const WeatherGradient = gradiente[weather?.weather?.[0]?.icon || '01d'];
+
   return (
-    <View className="w-full p-4 my-4 bg-white rounded-lg shadow-sm">
+    <LinearGradient
+      colors={WeatherGradient}
+      style={{
+        borderRadius: 10,
+        padding: 16,
+        marginVertical: 12,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 5,
+      }}>
       {isLoading ? (
-        <ActivityIndicator size="large" color={primary[500]} />
+        <View style={{ height: 80, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color="#ffffff" />
+        </View>
       ) : weather ? (
-        <View className="flex flex-col">
-          <View className="flex flex-row items-center gap-2">
-            <Image
-              source={{
-                uri: `http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`,
-              }}
-              style={{ width: 50, height: 50 }}
-            />
-            <Text className="text-2xl text-neutral-500">Frutal</Text>
+        <View
+          style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <View>
+            <Text
+              style={{
+                fontSize: 50,
+                fontWeight: 'bold',
+                color: '#ffffff',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 5,
+              }}>
+              {weather?.main?.temp?.toFixed(0)}°
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '500',
+                color: '#fafafa',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 5,
+              }}>
+              {firstUpperCase(weather?.weather?.[0]?.description || '')}
+            </Text>
           </View>
-          <View className="flex flex-row justify-between my-4">
-            <View className="flex flex-col text-lg font-bold text-primary">
-              <Text>{weather.weather[0].main}</Text>
-              <Text>{weather.main.temp} °C</Text>
-            </View>
-            <View className="flex flex-col justify-end"></View>
-          </View>
+          <WeatherIcon size={100} style={{ position: 'absolute', right: -45 }} color="#fff" />
         </View>
       ) : (
-        <Text>Não foi possível carregar as informações do clima.</Text>
+        <Text style={{ textAlign: 'center', color: '#ffffff' }}>Erro ao carregar os dados</Text>
       )}
-    </View>
+    </LinearGradient>
   );
 };
 

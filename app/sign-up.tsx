@@ -11,7 +11,7 @@ import { Label } from '@/components/Label';
 import { Input } from '@/components/Input';
 import { primary } from '@/config/colors';
 import { router } from 'expo-router';
-import { registerUser } from './api/signup';
+import { registerUser } from '../api/signup';
 
 // Schema de validação com Zod
 const schema = z

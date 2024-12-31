@@ -11,7 +11,7 @@ import { Label } from '@/components/Label';
 import { Input } from '@/components/Input';
 import { primary } from '@/config/colors';
 import { router } from 'expo-router';
-import { loginUser } from './api/signin';
+import { loginUser } from '../api/signin';
 import { setItem } from '@/utils/storage';
 import { Store, useStoreBase } from '@/store';
 
