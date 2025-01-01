@@ -2,7 +2,7 @@
 /* eslint-disable import/order */
 /* eslint-disable prettier/prettier */
 import React from 'react';
-import { ActivityIndicator, Text, View, Image } from 'react-native';
+import { ActivityIndicator, Text, View, Image, useColorScheme } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useOpenWeatherMap } from '@/api/openweathermap';
 import { firstUpperCase } from '@/utils/formatString';
@@ -23,7 +23,10 @@ interface CardWeathermapProps {
 }
 
 const CardWeathermap: React.FC<CardWeathermapProps> = ({ props }) => {
+  const theme = useColorScheme();
   const { weather, isLoading } = useOpenWeatherMap(props);
+
+  const dark = theme === 'dark';
 
   const Icon = {
     '01d': Sun,
@@ -40,8 +43,8 @@ const CardWeathermap: React.FC<CardWeathermapProps> = ({ props }) => {
   const gradiente = {
     '01d': ['#49b8fc', '#87CEFA'],
     '02d': ['#19a3f7', '#60bff7'],
-    '03d': ['#fafafa', '#dadada'],
-    '04d': ['#707070', '#dadada'],
+    '03d': ['#3f3f46', '#27272a'],
+    '04d': ['#52525b', '#3f3f46'],
     '09d': ['#0279bf', '#22a5f2'],
     '10d': ['#0d8fdb', '#45b5f7'],
     '11d': ['#49b8fc', '#87CEFA'],
@@ -52,7 +55,8 @@ const CardWeathermap: React.FC<CardWeathermapProps> = ({ props }) => {
   //@ts-ignore
   const WeatherIcon = Icon[weather?.weather?.[0]?.icon || '01d'];
   //@ts-ignore
-  const WeatherGradient = gradiente[weather?.weather?.[0]?.icon || '01d'];
+  // const WeatherGradient = gradiente[weather?.weather?.[0]?.icon || '01d'];
+  const WeatherGradient = gradiente['03d'];
 
   return (
     <LinearGradient

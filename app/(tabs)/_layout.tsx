@@ -4,8 +4,10 @@
 import { primary } from '@/config/colors';
 import { Tabs } from 'expo-router';
 import { History, House, MapPinned, User, Map } from 'lucide-react-native';
+import { useColorScheme } from 'react-native';
 
 export default function TabLayout() {
+  const theme = useColorScheme();
   return (
     <Tabs
       screenOptions={({ route }) => ({
@@ -37,7 +39,7 @@ export default function TabLayout() {
         tabBarInactiveTintColor: 'gray',
         tabBarStyle: {
           display: 'flex',
-          backgroundColor: '#fafafa',
+          backgroundColor: theme === 'dark' ? '#171717' : '#fafafa',
           borderTopWidth: 0,
         },
       })}>

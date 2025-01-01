@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 5,
-    height: '76%',
   },
   map: {
     width: '100%',

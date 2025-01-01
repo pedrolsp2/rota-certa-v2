@@ -13,7 +13,7 @@ const Perfil: React.FC = () => {
   const { user, cep } = useStoreBase(stateSelector);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="dark:bg-neutral-950">
       <View className="p-4">
         <Text className="font-poppins text-3xl font-bold text-primary">Olá, {user || ''}</Text>
         <CardWeathermap props={cep} />
