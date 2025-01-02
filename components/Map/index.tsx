@@ -9,6 +9,7 @@ import {
   requestForegroundPermissionsAsync,
   getCurrentPositionAsync,
 } from 'expo-location';
+import SplashLoading from '../SplashLoading';
 
 export default function Map() {
   const [location, setLocation] = useState<LocationObject | null>(null);
@@ -37,7 +38,7 @@ export default function Map() {
   return (
     <View style={styles.container}>
       {isLoading ? (
-        <View style={[styles.map, { backgroundColor: '#fff' }]} />
+        <SplashLoading />
       ) : (
         <MapView
           style={styles.map}
@@ -58,7 +59,6 @@ export default function Map() {
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -68,6 +68,5 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%',
-    borderRadius: 10,
   },
 });

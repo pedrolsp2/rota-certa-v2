@@ -11,6 +11,8 @@ export interface Weathermap {
   timezone: number;
   id: number;
   name: string;
+  localidade: string;
+  uf: string;
   cod: number;
 }
 

@@ -54,7 +54,7 @@ const Login: React.FC = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-neutral-100 dark:bg-neutral-900">
-      <View className="my-8 flex-1 justify-between px-6">
+      <View className="justify-between flex-1 px-6 my-8">
         <View className="container mt-12">
           <Text className="text-5xl font-extrabold text-primary-500">Bem-vindo!</Text>
           <Text className="text-lg text-neutral-500 dark:text-neutral-300">
@@ -121,8 +121,8 @@ const Login: React.FC = () => {
         <View className="container mt-12">
           <TouchableOpacity
             onPress={handleSubmit(onSubmit)}
-            className="mt-6 flex items-center justify-center rounded-lg bg-primary-500 py-3">
-            <Text className="text-center text-lg font-semibold text-white">
+            className="flex items-center justify-center py-3 mt-6 rounded-lg bg-primary-500">
+            <Text className="text-lg font-semibold text-center text-white">
               {isLoading ? <ActivityIndicator size="small" color="#fff" /> : 'Entrar'}
             </Text>
           </TouchableOpacity>

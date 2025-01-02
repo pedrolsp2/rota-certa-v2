@@ -3,9 +3,10 @@
 /* eslint-disable prettier/prettier */
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { getItem } from '@/utils/storage';
 import { Store, useStoreBase } from '@/store';
+import Map from '@/components/Map';
 
 const stateSelector = (state: Store) => ({ login: state.login });
 
@@ -42,9 +43,8 @@ export default function Home() {
   }
 
   return (
-    <SafeAreaView>
-      <Text className="font-poppins text-primary">Home</Text>
-      <Text className="text-primary">Home</Text>
-    </SafeAreaView>
+    <View className="dark:bg-neutral-950">
+      <Map />
+    </View>
   );
 }
