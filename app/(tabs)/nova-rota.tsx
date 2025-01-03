@@ -3,13 +3,19 @@
 /* eslint-disable prettier/prettier */
 import { Input } from '@/components/Input';
 import { Label } from '@/components/Label';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { ActivityIndicator, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
 import { Camera } from 'lucide-react-native';
 import { Switch } from '@/components/Switch';
+import { useNewRoute } from '@/api/new-route';
+import { Store, useStoreBase } from '@/store';
+
+const stateSelector = (state: Store) => ({
+  idUser: state.idUser,
+});
 
 const schema = z.object({
   cep: z
@@ -20,27 +26,35 @@ const schema = z.object({
   name: z.string(),
 });
 
-type FormData = z.infer<typeof schema>;
+export type FormDataRoute = z.infer<typeof schema>;
 
 type OptinsSize = 'Large' | 'Medium' | 'Small';
 
 const NovaRota: React.FC = () => {
-  const [checked, setChecked] = useState<OptinsSize>();
+  const { idUser } = useStoreBase(stateSelector);
+  const [checked, setChecked] = useState<OptinsSize>('Medium');
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
     control,
-  } = useForm<FormData>({
+  } = useForm<FormDataRoute>({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = async (data: FormData) => {
-    console.log(data);
+  const { isLoading, status, fetchCoordinates } = useNewRoute();
+
+  const onSubmit = async (data: FormDataRoute) => {
+    fetchCoordinates({ ...data, idUser });
   };
 
-  const isLoading = false;
+  useEffect(() => {
+    if (status?.message) {
+      Alert.alert(status.success ? 'Sucesso' : 'Erro', status.message);
+    }
+    reset({ cep: '38204146', number: '158', name: 'Pedro Lucas' });
+  }, [status]);
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-neutral-950">
@@ -73,6 +87,7 @@ const NovaRota: React.FC = () => {
                   autoCapitalize="none"
                   keyboardType="number-pad"
                   className={errors.cep ? 'border-red-500' : ''}
+                  maxLength={8}
                 />
               )}
               name="cep"
@@ -95,7 +110,7 @@ const NovaRota: React.FC = () => {
                   onChangeText={onChange}
                   value={value}
                   autoCapitalize="none"
-                  keyboardType="number-pad"
+                  keyboardType="default"
                   className={errors.number ? 'border-red-500' : ''}
                 />
               )}
@@ -114,7 +129,6 @@ const NovaRota: React.FC = () => {
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
-                autoCapitalize="none"
                 keyboardType="default"
                 className={errors.name ? 'border-red-500' : ''}
               />

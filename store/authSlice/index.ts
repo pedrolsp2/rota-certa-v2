@@ -22,6 +22,7 @@ const initialState: AuthStore = {
   password: '',
   passwordConfirmation: '',
   user: '',
+  idUser: '',
 };
 
 export const useAuthSlice: ImmerStateCreator<AuthSlice> = (set) => ({

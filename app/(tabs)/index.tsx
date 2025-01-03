@@ -4,7 +4,7 @@
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
-import { getItem } from '@/utils/storage';
+import { getItem, setItem } from '@/utils/storage';
 import { Store, useStoreBase } from '@/store';
 import Map from '@/components/Map';
 
@@ -21,11 +21,11 @@ export default function Home() {
       setIsLoading(true);
       try {
         const user = await getItem('user');
-
         if (!user) {
           router.replace('/sign-in');
           return null;
         }
+
         login(user);
       } catch (error) {
         console.error('Erro ao verificar usuário:', error);

@@ -29,7 +29,11 @@ export const loginUser = async ({ email, password, setIsLoading }: LoginData) =>
     const userData = userDoc.data() as Token;
 
     setIsLoading(false);
-    return { success: true, message: 'Login realizado com sucesso.', user: userData };
+    return {
+      success: true,
+      message: 'Login realizado com sucesso.',
+      user: { ...userData, idUser: user.uid },
+    };
   } catch (error: unknown) {
     if (error instanceof FirebaseError) {
       let errorMessage = 'Erro ao realizar login.';

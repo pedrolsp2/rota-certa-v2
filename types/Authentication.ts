@@ -6,4 +6,5 @@ export interface Token {
   password: string;
   passwordConfirmation: string;
   user: string;
+  idUser: string;
 }

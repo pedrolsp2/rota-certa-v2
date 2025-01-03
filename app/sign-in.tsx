@@ -43,7 +43,7 @@ const Login: React.FC = () => {
 
   const onSubmit = async (data: FormData) => {
     const { message, success, user } = await loginUser({ ...data, setIsLoading });
-    Alert.alert(success ? 'Sucesso!' : 'Erro!', message);
+    !success && Alert.alert(success ? 'Sucesso!' : 'Erro!', message);
     if (success) {
       reset();
       setItem('user', user);
